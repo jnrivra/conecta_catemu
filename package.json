@@ -1,0 +1,12 @@
+{
+  "name": "catemu-conecta-presentacion",
+  "version": "1.0.0",
+  "description": "Generador de presentación PDF para CatemuConecta",
+  "main": "generate-pdf.js",
+  "scripts": {
+    "generate-pdf": "node generate-pdf.js"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  }
+}

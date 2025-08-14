@@ -1,0 +1,184 @@
+{
+  "name": "Process New Report",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-report",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - New Report",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "claude-3-haiku-20240307"
+            },
+            {
+              "name": "max_tokens",
+              "value": "100"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"user\", \"content\": \"Categoriza el siguiente reporte municipal en una de estas categorías: alumbrado, baches, basura, areas-verdes, seguridad, ruidos, animales, senaletica, agua, otros. También determina la prioridad (alta, media, baja). Reporte: {{$json[\"description\"]}}. Responde SOLO con un JSON: {\\\"category\\\": \\\"...\\\", \\\"priority\\\": \\\"...\\\", \\\"department\\\": \\\"...\\\"}\"}]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "claude-categorize",
+      "name": "Claude - Categorize Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const claudeResponse = items[0].json.content[0].text;\nconst parsed = JSON.parse(claudeResponse);\n\nreturn [{\n  json: {\n    report_id: items[0].json.report_id,\n    category: parsed.category,\n    priority: parsed.priority,\n    department: parsed.department,\n    original_description: items[0].json.description,\n    location: items[0].json.location,\n    timestamp: items[0].json.timestamp\n  }\n}];"
+      },
+      "id": "parse-response",
+      "name": "Parse Claude Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json[\"priority\"]}}",
+              "value2": "alta"
+            }
+          ]
+        }
+      },
+      "id": "check-priority",
+      "name": "Check Priority",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "catemu-conecta@municatemu.cl",
+        "toEmail": "={{$json[\"department\"]}}@municatemu.cl",
+        "subject": "URGENTE: Nuevo reporte de alta prioridad - {{$json[\"category\"]}}",
+        "text": "Se ha recibido un nuevo reporte de alta prioridad.\n\nID: {{$json[\"report_id\"]}}\nCategoría: {{$json[\"category\"]}}\nDescripción: {{$json[\"original_description\"]}}\nUbicación: {{$json[\"location\"]}}\n\nPor favor, revisar inmediatamente en el dashboard.",
+        "options": {}
+      },
+      "id": "send-alert",
+      "name": "Send Alert Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "processed"
+            },
+            {
+              "name": "message",
+              "value": "Report categorized successfully"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [1050, 400]
+    }
+  ],
+  "connections": {
+    "webhook-trigger": {
+      "main": [
+        [
+          {
+            "node": "claude-categorize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "claude-categorize": {
+      "main": [
+        [
+          {
+            "node": "parse-response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "parse-response": {
+      "main": [
+        [
+          {
+            "node": "check-priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-priority": {
+      "main": [
+        [
+          {
+            "node": "send-alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send-alert": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "qr-generator",
+  "version": "1.0.0",
+  "description": "QR Code generator for CatemuConecta",
+  "main": "generate.js",
+  "scripts": {
+    "generate": "node generate.js"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.3"
+  }
+}

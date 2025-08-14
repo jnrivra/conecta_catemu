@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatemuConecta - Flujo de Usuario</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Portada */
+        .cover-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            page-break-after: always;
+        }
+
+        .cover-page h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .cover-page h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cover-page .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+        }
+
+        .cover-page .meta {
+            position: absolute;
+            bottom: 40px;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Secciones */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Flow diagrams */
+        .flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .flow-arrow {
+            color: #667eea;
+            font-size: 2rem;
+            flex: 0 0 auto;
+        }
+
+        /* Mockups */
+        .mockup-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .mockup {
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .mockup:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .mockup-header {
+            background: #f3f4f6;
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+
+        .browser-dot.red { background: #ef4444; }
+        .browser-dot.yellow { background: #f59e0b; }
+        .browser-dot.green { background: #10b981; }
+
+        .mockup-content {
+            padding: 20px;
+            background: white;
+            min-height: 400px;
+        }
+
+        .mockup-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* Screen simulations */
+        .screen-home {
+            background: linear-gradient(to bottom, #f3f4f6 0%, white 20%);
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .hero-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-card {
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-card:hover {
+            border-color: #667eea;
+            background: #f3f4f6;
+        }
+
+        .action-card-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .action-card-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .action-card-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Survey list mockup */
+        .survey-item {
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+
+        .survey-info {
+            flex: 1;
+        }
+
+        .survey-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .survey-meta {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .survey-badge {
+            padding: 5px 10px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* Form mockup */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .category-item {
+            padding: 15px 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-item:hover {
+            border-color: #667eea;
+            background: #f3f4f6;
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .category-name {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Success mockup */
+        .success-box {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .success-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            background: linear-gradient(135deg, #f3f4f6 0%, white 100%);
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Stats */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .stat-card {
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        /* Button styles */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            margin-top: 60px;
+        }
+
+        .footer p {
+            opacity: 0.9;
+        }
+
+        /* Print styles - Optimized for US Letter */
+        @media print {
+            @page {
+                size: letter;
+                margin: 0.5in;
+            }
+            
+            body {
+                background: white;
+                font-size: 11pt;
+            }
+            
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #e5e7eb;
+                margin: 20px 0;
+                padding: 30px;
+            }
+            
+            .cover-page {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 10in;
+                page-break-after: always;
+            }
+            
+            .mockup-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .mockup {
+                page-break-inside: avoid;
+            }
+            
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.8rem; }
+            h3 { font-size: 1.3rem; }
+            h4 { font-size: 1.1rem; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cover-page h1 {
+                font-size: 2.5rem;
+            }
+            
+            .flow-container {
+                flex-direction: column;
+            }
+            
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .mockup-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Portada -->
+    <div class="cover-page">
+        <h1>🏛️ CatemuConecta</h1>
+        <h2>Sistema de Participación Ciudadana con IA</h2>
+        <div class="subtitle">
+            <p>Flujo de Usuario y Mockups</p>
+            <p>Aplicación Web para Ciudadanos</p>
+        </div>
+        <div class="meta">
+            <p><strong>Hackaton:</strong> Municipios a la VanguardIA</p>
+            <p><strong>Municipalidad de Catemu</strong></p>
+            <p><strong>Agosto 2025</strong></p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Sección 1: Visión General -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-number">1</span>
+                Visión General del Sistema
+            </h2>
+            
+            <p style="font-size: 1.2rem; line-height: 1.8; color: #666; margin-bottom: 2rem;">
+                CatemuConecta es una plataforma digital que facilita la participación ciudadana mediante encuestas 
+                inteligentes y un sistema de reportes geolocalizados. Los ciudadanos pueden reportar problemas 
+                urbanos, responder encuestas municipales y contribuir activamente al mejoramiento de su comuna.
+            </p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-title">Acceso Multiplataforma</div>
+                    <div class="feature-desc">Disponible vía web, códigos QR y tótems interactivos en espacios públicos</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">IA Local</div>
+                    <div class="feature-desc">Procesamiento inteligente de reportes y categorización automática</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📍</div>
+                    <div class="feature-title">Geolocalización</div>
+                    <div class="feature-desc">Ubicación precisa de problemas reportados para respuesta rápida</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Análisis en Tiempo Real</div>
+                    <div class="feature-desc">Dashboard municipal con métricas y estadísticas actualizadas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 2: Flujo Principal -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-number">2</span>
+                Flujo Principal de Usuario
+            </h2>
+            
+            <div class="flow-container">
+                <div class="flow-step">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🏠</div>
+                    <h3>Página Principal</h3>
+                    <p style="color: #666;">Usuario accede a CatemuConecta</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔀</div>
+                    <h3>Selección de Acción</h3>
+                    <p style="color: #666;">Elige entre encuestas o reportes</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📝</div>
+                    <h3>Completar Formulario</h3>
+                    <p style="color: #666;">Responde preguntas o describe problema</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                    <h3>Confirmación</h3>
+                    <p style="color: #666;">Recibe número de referencia</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 3: Página Principal -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-number">3</span>
+                Pantalla de Inicio
+            </h2>
+            
+            <div class="mockup">
+                <div class="mockup-header">
+                    <div class="browser-dot red"></div>
+                    <div class="browser-dot yellow"></div>
+                    <div class="browser-dot green"></div>
+                </div>
+                <div class="mockup-content screen-home">
+                    <div class="hero-section">
+                        <h3>🏛️ CatemuConecta</h3>
+                        <p>Tu voz importa</p>
+                        <div style="margin-top: 20px;">
+                            <h2>Bienvenido a CatemuConecta</h2>
+                            <p style="margin-top: 10px; opacity: 0.95;">
+                                Participa activamente en el mejoramiento de nuestra comuna.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="action-cards">
+                        <div class="action-card">
+                            <div class="action-card-icon">📋</div>
+                            <div class="action-card-title">5 Encuestas Activas</div>
+                            <div class="action-card-desc">
+                                Participa en múltiples encuestas sobre servicios municipales
+                            </div>
+                        </div>
+                        <div class="action-card">
+                            <div class="action-card-icon">⚠️</div>
+                            <div class="action-card-title">Reportar Problema</div>
+                            <div class="action-card-desc">
+                                Informa sobre problemas en tu barrio
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-container" style="margin-top: 30px;">
+                        <div class="stat-card">
+                            <div class="stat-number">245</div>
+                            <div class="stat-label">Reportes resueltos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">1,234</div>
+                            <div class="stat-label">Participaciones</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">72h</div>
+                            <div class="stat-label">Tiempo respuesta</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 4: Flujo de Encuestas -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-number">4</span>
+                Flujo de Encuestas
+            </h2>
+            
+            <div class="mockup-container">
+                <!-- Lista de Encuestas -->
+                <div class="mockup">
+                    <div class="mockup-header">
+                        <div class="browser-dot red"></div>
+                        <div class="browser-dot yellow"></div>
+                        <div class="browser-dot green"></div>
+                    </div>
+                    <div class="mockup-content">
+                        <div class="mockup-title">📋 Encuestas Activas</div>
+                        
+                        <div class="survey-item">
+                            <div class="survey-info">
+                                <div class="survey-title">Evaluación de Servicios Municipales</div>
+                                <div class="survey-meta">10 preguntas • 5 min</div>
+                            </div>
+                            <div class="survey-badge">ALTA</div>
+                        </div>
+                        
+                        <div class="survey-item">
+                            <div class="survey-info">
+                                <div class="survey-title">Transporte Público en Catemu</div>
+                                <div class="survey-meta">8 preguntas • 4 min</div>
+                            </div>
+                            <div class="survey-badge">MEDIA</div>
+                        </div>
+                        
+                        <div class="survey-item">
+                            <div class="survey-info">
+                                <div class="survey-title">Seguridad Ciudadana</div>
+                                <div class="survey-meta">12 preguntas • 6 min</div>
+                            </div>
+                            <div class="survey-badge">ALTA</div>
+                        </div>
+                        
+                        <div class="survey-item">
+                            <div class="survey-info">
+                                <div class="survey-title">Actividades Culturales</div>
+                                <div class="survey-meta">6 preguntas • 3 min</div>
+                            </div>
+                            <div class="survey-badge">MEDIA</div>
+                        </div>
+                        
+                        <div class="survey-item">
+                            <div class="survey-info">
+                                <div class="survey-title">Medio Ambiente y Reciclaje</div>
+                                <div class="survey-meta">9 preguntas • 5 min</div>
+                            </div>
+                            <div class="survey-badge">ALTA</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de Encuesta -->
+                <div class="mockup">
+                    <div class="mockup-header">
+                        <div class="browser-dot red"></div>
+                        <div class="browser-dot yellow"></div>
+                        <div class="browser-dot green"></div>
+                    </div>
+                    <div class="mockup-content">
+                        <div class="mockup-title">📊 Evaluación de Servicios</div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">1. ¿Cómo evalúa la atención municipal?</label>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <button class="btn btn-secondary">Excelente</button>
+                                <button class="btn btn-secondary">Buena</button>
+                                <button class="btn btn-primary">Regular</button>
+                                <button class="btn btn-secondary">Mala</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">2. ¿Qué servicios utiliza más?</label>
+                            <div style="display: grid; gap: 10px;">
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" checked> Permisos de circulación
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox"> Licencias de conducir
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" checked> Patentes comerciales
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox"> Asistencia social
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">3. Sugerencias adicionales (Opcional)</label>
+                            <textarea class="form-textarea" placeholder="Escriba sus comentarios aquí..."></textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%;">
+                            ✓ Enviar Encuesta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 5: Flujo de Reportes -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-number">5</span>
+                Flujo de Reporte de Incidencias
+            </h2>
+            
+            <div class="mockup-container">
+                <!-- Selección de Categoría -->
+                <div class="mockup">
+                    <div class="mockup-header">
+                        <div class="browser-dot red"></div>
+                        <div class="browser-dot yellow"></div>
+                        <div class="browser-dot green"></div>
+                    </div>
+                    <div class="mockup-content">
+                        <div class="mockup-title">⚠️ Reportar Incidencia</div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">1. Tipo de incidencia *</label>
+                            <div class="category-grid">
+                                <div class="category-item">
+                                    <div class="category-icon">💡</div>
+                                    <div class="category-name">Alumbrado</div>
+                                </div>
+                                <div class="category-item" style="border-color: #667eea; background: #f3f4f6;">
+                                    <div class="category-icon">🚧</div>
+                                    <div class="category-name">Baches</div>
+                                </div>
+                                <div class="category-item">
+                                    <div class="category-icon">🗑️</div>
+                                    <div class="category-name">Basura</div>
+                                </div>
+                                <div class="category-item">
+                                    <div class="category-icon">🌳</div>
+                                    <div class="category-name">Áreas Verdes</div>
+                                </div>
+                                <div class="category-item">
+                                    <div class="category-icon">🚨</div>
+                                    <div class="category-name">Seguridad</div>
+                                </div>
+                                <div class="category-item">
+                                    <div class="category-icon">🔊</div>
+                                    <div class="category-name">Ruidos</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descripción y Ubicación -->
+                <div class="mockup">
+                    <div class="mockup-header">
+                        <div class="browser-dot red"></div>
+                        <div class="browser-dot yellow"></div>
+                        <div class="browser-dot green"></div>
+                    </div>
+                    <div class="mockup-content">
+                        <div class="mockup-title">📝 Detalles del Reporte</div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">2. Descripción del problema *</label>
+                            <textarea class="form-textarea" placeholder="Describe el problema con detalle...">Bache profundo en la esquina de Av. Principal con calle Los Aromos. Es peligroso para vehículos y peatones.</textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">3. Ubicación (Opcional)</label>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-secondary">
+                                    📍 Usar mi ubicación
+                                </button>
+                                <button class="btn btn-secondary">
+                                    🗺️ Seleccionar en mapa
+                                </button>
+                            </div>
+                            <div style="margin-top: 15px; padding: 15px; background: #f3f4f6; border-radius: 8px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="color: #10b981; font-weight: 600;">✓ Ubicación agregada</div>
+                                        <div style="font-size: 0.9rem; color: #666;">Lat: -32.7805, Lng: -70.9643</div>
+                                    </div>
+                                    <button style="color: #ef4444; background: none; border: none; cursor: pointer;">✕</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">4. Fotografía (Opcional)</label>
+                            <div style="border: 2px dashed #e5e7eb; border-radius: 8px; padding: 30px; text-align: center; background: #f9fafb;">
+                                <div style="font-size: 2rem; margin-bottom: 10px;">📷</div>
+                                <p>Haz clic para subir una foto</p>
+                                <p style="font-size: 0.85rem; color: #666;">Máximo 10MB</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de Contacto -->
+                <div class="mockup">
+                    <div class="mockup-header">
+                        <div class="browser-dot red"></div>
+                        <div class="browser-dot yellow"></div>
+                        <div class="browser-dot green"></div>
+                    </div>
+                    <div class="mockup-content">
+                        <div class="mockup-title">📞 Información de Contacto</div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">5. Datos de contacto (Opcional)</label>
+                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">
+                                Para poder informarte sobre el estado de tu reporte
+                            </p>
+                            <input type="text" class="form-input" placeholder="Nombre" style="margin-bottom: 10px;">
+                            <input type="tel" class="form-input" placeholder="Teléfono" style="margin-bottom: 10px;">
+                            <input type="email" class="form-input" placeholder="Correo electrónico">
+                        </div>
+                        
+                        <div style="margin-top: 30px;">
+                            <p style="font-size: 0.85rem; color: #666; text-align: center; margin-bottom: 15px;">
+                                * Campos obligatorios
+                            </p>
+                            <button class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 15px;">
+                                ✓ Enviar Reporte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 6: Pantalla de Confirmación -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-number">6</span>
+                Confirmación y Seguimiento
+            </h2>
+            
+            <div class="mockup" style="max-width: 500px; margin: 0 auto;">
+                <div class="mockup-header">
+                    <div class="browser-dot red"></div>
+                    <div class="browser-dot yellow"></div>
+                    <div class="browser-dot green"></div>
+                </div>
+                <div class="mockup-content">
+                    <div class="success-box">
+                        <div class="success-icon">✅</div>
+                        <div class="success-title">¡Muchas gracias!</div>
+                        <div class="success-message">
+                            Tu reporte ha sido recibido. Nuestro equipo lo revisará y tomará las acciones necesarias.
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 20px; background: #f3f4f6; border-radius: 10px; margin: 20px 0;">
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Número de referencia:</p>
+                        <p style="font-size: 1.5rem; font-family: monospace; font-weight: bold; color: #333;">
+                            #A3F2K9M1X
+                        </p>
+                    </div>
+                    
+                    <div style="background: #e0f2fe; border: 1px solid #0284c7; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                        <h4 style="color: #0c4a6e; margin-bottom: 10px;">Próximos pasos:</h4>
+                        <ul style="list-style: none; padding: 0; color: #075985; line-height: 1.8;">
+                            <li>• Tu reporte será categorizado y asignado</li>
+                            <li>• Recibirás actualizaciones del estado</li>
+                            <li>• Tiempo estimado: 48-72 horas</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-primary" style="width: 100%;">
+                            🏠 Volver al inicio
+                        </button>
+                        <button class="btn btn-secondary" style="width: 100%;">
+                            📋 Responder encuesta
+                        </button>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                        <p style="color: #666; margin-bottom: 15px;">Ayúdanos a difundir CatemuConecta</p>
+                        <div style="display: flex; justify-content: center; gap: 15px;">
+                            <button style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #667eea; background: white; color: #667eea; cursor: pointer;">f</button>
+                            <button style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #667eea; background: white; color: #667eea; cursor: pointer;">X</button>
+                            <button style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #667eea; background: white; color: #667eea; cursor: pointer;">W</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 7: Características Técnicas -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-number">7</span>
+                Características Destacadas
+            </h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-title">Diseño Responsive</div>
+                    <div class="feature-desc">
+                        Adaptable a cualquier dispositivo: móviles, tablets y computadores
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📍</div>
+                    <div class="feature-title">Geolocalización Inteligente</div>
+                    <div class="feature-desc">
+                        Ubicación automática o manual con mapa interactivo
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📸</div>
+                    <div class="feature-title">Upload de Imágenes</div>
+                    <div class="feature-desc">
+                        Adjunta fotos para documentar mejor los reportes
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-title">Categorización Automática</div>
+                    <div class="feature-desc">
+                        IA local que clasifica y prioriza reportes automáticamente
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Métricas en Tiempo Real</div>
+                    <div class="feature-desc">
+                        Dashboard con estadísticas actualizadas para gestión municipal
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <div class="feature-title">Privacidad Garantizada</div>
+                    <div class="feature-desc">
+                        Opción de reportes anónimos y manejo seguro de datos
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 8: Impacto y Métricas -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-number">8</span>
+                Impacto Esperado
+            </h2>
+            
+            <div style="margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #f3f4f6 0%, white 100%); border-radius: 15px;">
+                <h3 style="color: #333; margin-bottom: 1rem;">Beneficios para Catemu</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <h4 style="color: #667eea; margin-bottom: 0.5rem;">Para los Ciudadanos</h4>
+                        <ul style="color: #666; line-height: 1.8;">
+                            <li>Canal directo de comunicación con el municipio</li>
+                            <li>Respuesta rápida a problemas urbanos</li>
+                            <li>Participación activa en decisiones comunales</li>
+                            <li>Seguimiento transparente de reportes</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: #667eea; margin-bottom: 0.5rem;">Para el Municipio</h4>
+                        <ul style="color: #666; line-height: 1.8;">
+                            <li>Gestión eficiente de recursos</li>
+                            <li>Identificación proactiva de problemas</li>
+                            <li>Datos para toma de decisiones informadas</li>
+                            <li>Mejora en satisfacción ciudadana</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 9: Próximos Pasos -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-number">9</span>
+                Roadmap de Implementación
+            </h2>
+            
+            <div style="position: relative; padding: 2rem 0;">
+                <!-- Timeline -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: #10b981; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold;">✓</div>
+                        <h4 style="color: #333; margin-bottom: 0.5rem;">Fase 1: MVP</h4>
+                        <p style="color: #666; font-size: 0.9rem;">Hackaton - Agosto 2025</p>
+                        <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">
+                            Prototipo funcional con reportes y encuestas básicas
+                        </p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold;">2</div>
+                        <h4 style="color: #333; margin-bottom: 0.5rem;">Fase 2: Piloto</h4>
+                        <p style="color: #666; font-size: 0.9rem;">Sept - Oct 2025</p>
+                        <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">
+                            Implementación en barrios seleccionados de Catemu
+                        </p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: #764ba2; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold;">3</div>
+                        <h4 style="color: #333; margin-bottom: 0.5rem;">Fase 3: Expansión</h4>
+                        <p style="color: #666; font-size: 0.9rem;">Nov 2025 - Ene 2026</p>
+                        <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">
+                            Cobertura total de Catemu y tótems interactivos
+                        </p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: #f59e0b; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold;">4</div>
+                        <h4 style="color: #333; margin-bottom: 0.5rem;">Fase 4: Nacional</h4>
+                        <p style="color: #666; font-size: 0.9rem;">2026</p>
+                        <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">
+                            Escalamiento a otras municipalidades de Chile
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <h3 style="margin-bottom: 1rem;">🏛️ CatemuConecta</h3>
+        <p>Sistema de Participación Ciudadana con IA</p>
+        <p style="margin-top: 2rem;">
+            <strong>Hackaton "Municipios a la VanguardIA"</strong><br>
+            Municipalidad de Catemu • Agosto 2025
+        </p>
+        <p style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.8;">
+            Desarrollado por: Equipo CatemuConecta
+        </p>
+    </div>
+</body>
+</html>
