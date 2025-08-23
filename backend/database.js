@@ -23,11 +23,15 @@ function initDatabase() {
         description TEXT NOT NULL,
         location TEXT NOT NULL,
         image_url TEXT,
+        image_path TEXT,
         contact_info TEXT,
         status TEXT DEFAULT 'pending',
         priority TEXT DEFAULT 'normal',
         assigned_to TEXT,
         notes TEXT,
+        source TEXT DEFAULT 'web',
+        department TEXT,
+        whatsapp_number TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )

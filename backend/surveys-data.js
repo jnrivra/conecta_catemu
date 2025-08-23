@@ -338,6 +338,71 @@ const surveys = [
   },
   {
     id: 6,
+    title: "🚀 Encuesta de Satisfacción – Hackathon IA y Municipalidades",
+    description: "Tu opinión es fundamental para mejorar futuros eventos",
+    category: "innovacion",
+    estimated_time: "2 minutos",
+    priority: "muy alta",
+    active: true,
+    questions: [
+      {
+        id: 1,
+        type: "single",
+        question: "¿Cuál fue tu rol en la hackathon?",
+        options: [
+          "Funcionario(a) municipal",
+          "Desarrollador(a)"
+        ],
+        required: true
+      },
+      {
+        id: 2,
+        type: "rating",
+        question: "¿Cómo evaluarías la organización general de la hackathon?",
+        options: ["1", "2", "3", "4", "5"],
+        labels: ["Muy deficiente", "Deficiente", "Regular", "Buena", "Excelente"],
+        required: true
+      },
+      {
+        id: 3,
+        type: "rating",
+        question: "¿Qué tan valiosa fue la colaboración entre funcionarios municipales y desarrolladores en tu equipo?",
+        options: ["1", "2", "3", "4", "5"],
+        labels: ["Nada valiosa", "Poco valiosa", "Algo valiosa", "Valiosa", "Muy valiosa"],
+        required: true
+      },
+      {
+        id: 4,
+        type: "single",
+        question: "Según tu experiencia, ¿qué tanto puede aportar la inteligencia artificial para resolver problemáticas municipales?",
+        options: [
+          "Mucho",
+          "Bastante",
+          "Poco",
+          "Nada"
+        ],
+        required: true
+      },
+      {
+        id: 5,
+        type: "rating",
+        question: "¿Cómo calificarías el almuerzo entregado durante la hackathon?",
+        options: ["1", "2", "3", "4", "5"],
+        labels: ["Muy malo", "Malo", "Regular", "Bueno", "Excelente"],
+        required: true
+      },
+      {
+        id: 6,
+        type: "rating",
+        question: "En general, ¿qué tan satisfecho(a) quedaste con la hackathon?",
+        options: ["1", "2", "3", "4", "5"],
+        labels: ["Muy insatisfecho", "Insatisfecho", "Neutral", "Satisfecho", "Muy satisfecho"],
+        required: true
+      }
+    ]
+  },
+  {
+    id: 7,
     title: "Vivienda y Desarrollo Urbano",
     description: "Comparte tus necesidades habitacionales y de desarrollo urbano",
     category: "vivienda",

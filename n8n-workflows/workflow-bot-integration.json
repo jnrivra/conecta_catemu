@@ -1,0 +1,228 @@
+{
+  "name": "CatemuConecta Bot Integration",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bot-message",
+        "options": {}
+      },
+      "id": "webhook-bot-message",
+      "name": "Webhook Bot Message",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "bot-message-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"message_type\"]}}",
+              "value2": "report"
+            }
+          ]
+        }
+      },
+      "id": "is-report",
+      "name": "Is Report?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "prompt": "Analiza el siguiente reporte ciudadano y categorízalo:\n\nReporte: {{$json[\"message_content\"]}}\n\nDevuelve un JSON con:\n- category: (Alumbrado Público, Baches, Basura, Áreas Verdes, Seguridad, Otros)\n- priority: (alta, media, baja)\n- department: departamento responsable\n- summary: resumen breve del problema",
+        "simplifyOutput": true
+      },
+      "id": "ai-categorization",
+      "name": "AI Categorization",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [650, 200],
+      "credentials": {
+        "openAiApi": {
+          "id": "1",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:3001/api/reports",
+        "method": "POST",
+        "bodyParametersJson": "{\n  \"type\": \"whatsapp\",\n  \"category\": \"{{$json[\"category\"]}}\",\n  \"description\": \"{{$node[\"Webhook Bot Message\"].json[\"message_content\"]}}\",\n  \"location\": \"{{$node[\"Webhook Bot Message\"].json[\"location\"] || \"Por determinar\"}}\",\n  \"priority\": \"{{$json[\"priority\"]}}\",\n  \"department\": \"{{$json[\"department\"]}}\",\n  \"whatsapp_number\": \"{{$node[\"Webhook Bot Message\"].json[\"sender_number\"]}}\",\n  \"source\": \"whatsapp-bot\"\n}",
+        "options": {}
+      },
+      "id": "create-report",
+      "name": "Create Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"priority\"]}}",
+              "value2": "alta"
+            }
+          ]
+        }
+      },
+      "id": "is-high-priority",
+      "name": "High Priority?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:3001/api/notifications",
+        "method": "POST",
+        "bodyParametersJson": "{\n  \"department\": \"{{$node[\"AI Categorization\"].json[\"department\"]}}\",\n  \"message\": \"⚠️ REPORTE DE ALTA PRIORIDAD\\n\\nCategoría: {{$node[\"AI Categorization\"].json[\"category\"]}}\\nDescripción: {{$node[\"AI Categorization\"].json[\"summary\"]}}\\nReportado vía: WhatsApp\",\n  \"report_id\": \"{{$node[\"Create Report\"].json[\"id\"]}}\",\n  \"type\": \"urgent\"\n}",
+        "options": {}
+      },
+      "id": "send-alert",
+      "name": "Send Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1250, 100]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "response",
+              "value": "✅ Reporte procesado exitosamente"
+            },
+            {
+              "name": "report_id",
+              "value": "={{$node[\"Create Report\"].json[\"id\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "prepare-response",
+      "name": "Prepare Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1450, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Bot Message": {
+      "main": [
+        [
+          {
+            "node": "Is Report?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Report?": {
+      "main": [
+        [
+          {
+            "node": "AI Categorization",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Categorization": {
+      "main": [
+        [
+          {
+            "node": "Create Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Report": {
+      "main": [
+        [
+          {
+            "node": "High Priority?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "High Priority?": {
+      "main": [
+        [
+          {
+            "node": "Send Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Alert": {
+      "main": [
+        [
+          {
+            "node": "Prepare Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "1",
+  "id": "catemu-bot-integration",
+  "meta": {
+    "instanceId": "catemu-n8n"
+  },
+  "tags": []
+}

@@ -138,6 +138,48 @@ app.post('/api/surveys/:id/responses', async (req, res) => {
   }
 });
 
+// Obtener respuestas de una encuesta específica
+app.get('/api/surveys/:id/responses', (req, res) => {
+  const { id } = req.params;
+  
+  db.all(
+    `SELECT sr.*, sa.question_id, sa.answer 
+     FROM survey_responses sr
+     LEFT JOIN survey_answers sa ON sr.id = sa.response_id
+     WHERE sr.survey_id = ?
+     ORDER BY sr.created_at DESC`,
+    [id],
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      
+      // Agrupar respuestas por response_id
+      const responsesMap = {};
+      rows.forEach(row => {
+        if (!responsesMap[row.id]) {
+          responsesMap[row.id] = {
+            id: row.id,
+            survey_id: row.survey_id,
+            respondent_info: JSON.parse(row.respondent_info || '{}'),
+            created_at: row.created_at,
+            answers: []
+          };
+        }
+        if (row.question_id) {
+          responsesMap[row.id].answers.push({
+            question_id: row.question_id,
+            answer: row.answer
+          });
+        }
+      });
+      
+      const responses = Object.values(responsesMap);
+      res.json(responses);
+    }
+  );
+});
+
 // Crear nuevo reporte/incidencia
 app.post('/api/reports', upload.single('image'), async (req, res) => {
   const { 
@@ -234,7 +276,7 @@ app.get('/api/reports', (req, res) => {
     params.push(to_date);
   }
   
-  query += ' ORDER BY created_at DESC';
+  query += ' ORDER BY datetime(created_at) DESC';
   
   db.all(query, params, (err, rows) => {
     if (err) {
