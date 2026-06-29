@@ -91,7 +91,7 @@ flowchart LR
 
 **Flujo de un reporte:** WhatsApp → Bot (Baileys) → Backend (crea ticket en SQLite) → webhook a n8n → Claude categoriza/prioriza → backend actualiza el ticket → Dashboard lo muestra en tiempo real → el ciudadano recibe el número de ticket.
 
-> ℹ️ El backend incluye dos servidores: `backend/server.js` (base, el que arranca `ecosystem.config.js`) y `backend/server-enhanced.js`, que añade **Socket.IO**, **Helmet** y **rate limiting**. Los frontends `dashboard/` y `web-app/` están referenciados como **submódulos de git** (residen en repositorios propios), por lo que no se incluyen en este checkout.
+> ℹ️ El backend incluye dos servidores: `backend/server.js` (base, el que arranca `ecosystem.config.js`) y `backend/server-enhanced.js`, que añade **Socket.IO**, **Helmet** y **rate limiting**. Los frontends `dashboard/` (panel municipal) y `web-app/` (portal ciudadano PWA) se mantienen en **repositorios separados** y no forman parte de este checkout.
 
 ## 🧰 Stack tecnológico
 
@@ -99,7 +99,7 @@ flowchart LR
 |------|-------------|
 | **Backend** | Node.js, Express, SQLite3, Multer, Socket.IO, Helmet, express-rate-limit, ExcelJS, PDFKit, validator, xss, Axios |
 | **WhatsApp Bot** | `@whiskeysockets/baileys`, `@anthropic-ai/sdk` (Claude), qrcode-terminal, pino, node-cache, sharp |
-| **Frontend** | React 18, Chart.js, Leaflet, PWA *(submódulos `dashboard/` y `web-app/`)* |
+| **Frontend** | React 18, Chart.js, Leaflet, PWA *(repos separados: `dashboard/`, `web-app/`)* |
 | **Automatización / IA** | n8n, Claude (Anthropic) |
 | **Operación** | PM2 (`ecosystem.config.js`), QR generator |
 
@@ -121,8 +121,8 @@ conecta_catemu/
 │   └── config/           # security.js (modo seguro, números de prueba)
 ├── n8n-workflows/        # Workflows de automatización con IA (JSON)
 ├── qr-generator/         # Generador de códigos QR
-├── dashboard/            # Panel municipal — React (submódulo)
-├── web-app/              # Portal ciudadano PWA — React (submódulo)
+# dashboard/  -> Panel municipal — React (repo separado, no incluido)
+# web-app/    -> Portal ciudadano PWA — React (repo separado, no incluido)
 ├── DOCUMENTACION-COMPLETA/ # Documentación extendida
 ├── ecosystem.config.js   # Configuración de PM2
 └── .env.example          # Plantilla de variables de entorno
